@@ -10,6 +10,7 @@ pub mod cio;
 pub mod timing;
 pub mod executor;
 pub mod polymarket;
+pub mod collectors;
 
 // Re-export main types
 pub use types::*;
@@ -18,6 +19,7 @@ pub use cio::CIODecisionEngine;
 pub use timing::BlockTimer;
 pub use executor::{PaperExecutor, PaperTradingConfig, PriceTracker};
 pub use polymarket::PolymarketClient;
+pub use collectors::BinanceCollector;
 
 use tracing::{info, warn, error};
 
