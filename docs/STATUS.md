@@ -85,12 +85,12 @@ Upward momentum, buy-side absorption suggests UP.
 
 Critical Layer D feature - validates market odds match prediction:
 
-| Prediction | Required YES Odds | Action |
-|------------|-------------------|--------|
-| UP | >= 0.505 | Execute if odds >= 0.505 |
-| UP | < 0.505 | VETO - market disagrees |
-| DOWN | <= 0.495 | Execute if odds <= 0.495 |
-| DOWN | > 0.495 | VETO - market disagrees |
+| Prediction | Token to Buy | Required Odds | Example |
+|------------|--------------|---------------|---------|
+| UP | YES | >= 0.505 | YES at 0.52 ✅ |
+| UP | YES | < 0.505 | YES at 0.49 ❌ VETO |
+| DOWN | NO | >= 0.505 | NO at 0.52 (YES 0.48) ✅ |
+| DOWN | NO | < 0.505 | NO at 0.48 (YES 0.52) ❌ VETO |
 
 ### 3. 5-Minute Block Synchronization
 

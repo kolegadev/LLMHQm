@@ -59,14 +59,18 @@ pub struct PriceTracker {
 ### 2. OddsValidator
 Ensures Polymarket odds align with predicted direction:
 
-| Prediction | Required Odds | Example |
-|------------|---------------|---------|
-| UP (YES) | >= 0.505 | YES at 0.52 ✅ |
-| UP (YES) | < 0.505 | YES at 0.49 ❌ VETO |
-| DOWN (NO) | <= 0.495 | YES at 0.48 ✅ |
-| DOWN (NO) | > 0.495 | YES at 0.52 ❌ VETO |
+| Prediction | Token to Buy | Required Odds | Example |
+|------------|--------------|---------------|---------|
+| UP | YES | >= 0.505 | YES at 0.52 ✅ |
+| UP | YES | < 0.505 | YES at 0.49 ❌ VETO |
+| DOWN | NO | >= 0.505 | NO at 0.52 (YES at 0.48) ✅ |
+| DOWN | NO | < 0.505 | NO at 0.48 (YES at 0.52) ❌ VETO |
 
-**Why this matters**: If we predict UP but Polymarket shows YES at 0.49, the market disagrees with our prediction. Trading against the market odds reduces expected value.
+**Why this matters**: 
+- UP prediction → Buy YES tokens → Need YES >= 0.505
+- DOWN prediction → Buy NO tokens → Need NO >= 0.505 (i.e., YES <= 0.495)
+
+If odds don't meet threshold, the market price contradicts our prediction, reducing expected value.
 
 ### 3. PolymarketClient
 Fetches real-time odds from Gamma API:
@@ -92,8 +96,7 @@ Manages full trade lifecycle:
 ```rust
 PaperTradingConfig {
     block_duration_secs: 300,      // 5 minutes (or 900 for 15m)
-    yes_odds_threshold: 0.505,     // Minimum YES odds for UP bet
-    no_odds_threshold: 0.495,      // Maximum YES odds for DOWN bet
+    yes_odds_threshold: 0.505,     // Minimum odds for token purchase
     initial_balance: $10,000,      // Starting paper money
     max_position_pct: 95,          // Max % of balance per trade
     validate_odds: true,           // Enable odds validation
@@ -197,12 +200,20 @@ Threshold: 0.505
 Result: VETO - "YES odds 0.490 below threshold 0.505"
 ```
 
-### Scenario 3: Market Disagreement on DOWN ❌
+### Scenario 3: Valid DOWN Bet ✅
 ```
 Prediction: DOWN
-Polymarket YES: 0.55
-Threshold: 0.495
-Result: VETO - "YES odds 0.550 above threshold 0.495"
+Polymarket NO: 0.52 (YES at 0.48)
+Threshold: 0.505
+Result: VALID - Execute trade
+```
+
+### Scenario 4: Market Disagreement on DOWN ❌
+```
+Prediction: DOWN
+Polymarket NO: 0.48 (YES at 0.52)
+Threshold: 0.505
+Result: VETO - "NO odds 0.480 below threshold 0.505"
 ```
 
 ## Risk Controls

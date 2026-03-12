@@ -158,6 +158,10 @@ impl OddsValidator {
     
     /// Validate odds match intended trade direction
     /// 
+    /// Logic:
+    /// - UP prediction: Buy YES tokens → YES odds must be ≥ 0.505
+    /// - DOWN prediction: Buy NO tokens → NO odds must be ≥ 0.505 (i.e., YES ≤ 0.495)
+    /// 
     /// Returns: (is_valid, reason)
     pub fn validate(
         &self,
@@ -177,7 +181,7 @@ impl OddsValidator {
         
         match direction {
             Direction::Up => {
-                // For YES bet, need odds >= threshold (e.g., 0.505)
+                // For UP bet, we buy YES tokens → need YES odds >= threshold
                 if odds.yes_price >= self.config.yes_odds_threshold {
                     (true, None)
                 } else {
@@ -188,14 +192,15 @@ impl OddsValidator {
                 }
             }
             Direction::Down => {
-                // For NO bet, need odds <= threshold (e.g., 0.495)
-                // This means YES price should be <= 0.495
-                if odds.yes_price <= self.config.no_odds_threshold {
+                // For DOWN bet, we buy NO tokens → need NO odds >= threshold
+                // NO odds = 1 - YES odds (approximately)
+                let no_price = odds.no_price;
+                if no_price >= self.config.yes_odds_threshold { // Using same threshold for NO
                     (true, None)
                 } else {
                     (false, Some(format!(
-                        "YES odds {:.3} above threshold {:.3}. Contradicts DOWN prediction.",
-                        odds.yes_price, self.config.no_odds_threshold
+                        "NO odds {:.3} below threshold {:.3}. Contradicts DOWN prediction.",
+                        no_price, self.config.yes_odds_threshold
                     )))
                 }
             }
@@ -580,13 +585,13 @@ mod tests {
     fn test_odds_validator_no() {
         let config = PaperTradingConfig {
             yes_odds_threshold: 0.505,
-            no_odds_threshold: 0.495,
             ..Default::default()
         };
         
         let validator = OddsValidator::new(config);
         
-        // Valid NO bet (YES price low)
+        // Valid NO bet (NO price high enough)
+        // YES at 0.48 means NO at ~0.52, which is >= 0.505 ✓
         let good_odds = PolymarketOdds {
             timestamp: Utc::now(),
             yes_price: 0.48,
@@ -597,7 +602,8 @@ mod tests {
         let (valid, _) = validator.validate(Direction::Down, &good_odds);
         assert!(valid);
         
-        // Invalid NO bet (YES price too high)
+        // Invalid NO bet (NO price too low)
+        // YES at 0.52 means NO at ~0.48, which is < 0.505 ✗
         let bad_odds = PolymarketOdds {
             timestamp: Utc::now(),
             yes_price: 0.52,
@@ -607,6 +613,7 @@ mod tests {
         };
         let (valid, reason) = validator.validate(Direction::Down, &bad_odds);
         assert!(!valid);
-        assert!(reason.unwrap().contains("above threshold"));
+        assert!(reason.unwrap().contains("NO odds"));
+        assert!(reason.unwrap().contains("below threshold"));
     }
 }
