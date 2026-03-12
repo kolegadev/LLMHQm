@@ -133,11 +133,19 @@ CIODecision {
 
 ### 4. Veto Triggers
 
-1. **HIGH_BREAK pinning** - Possible manipulation
+1. **HIGH_BREAK pinning** - Possible manipulation ⚠️ **UNDER REVIEW**: Consider "bet with manipulation" strategy when PIN success rate data shows 75-80% reliability
 2. **Extreme spreads (>20 bps)** - Insufficient liquidity
 3. **Missing critical data** - Cannot make informed decision
 4. **Volatility expansion without direction** - Choppy market
 5. **Late OBI spike + thin liquidity** - Possible fake wall
+
+### 5. Note: Pinning Strategy Evolution
+
+Current implementation vetoes HIGH_BREAK pinning. However, data shows certain pinning conditions have 75-80% success rates. Future iteration should:
+- Detect high-probability PIN scenarios
+- Switch from VETO to "piggyback" strategy
+- Bet WITH the manipulation rather than against it
+- Track PIN success rate statistics per regime
 
 ## Database Schema (TimescaleDB)
 
