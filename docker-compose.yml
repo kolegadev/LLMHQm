@@ -1,0 +1,100 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: llmhq-postgres
+    environment:
+      POSTGRES_USER: llmhq
+      POSTGRES_PASSWORD: llmhq_pass
+      POSTGRES_DB: llmhq
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./rust/migrations:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U llmhq"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - llmhq-network
+
+  # LLMHQ Trading Engine
+  llmhq:
+    build:
+      context: ./rust
+      dockerfile: Dockerfile
+    container_name: llmhq-engine
+    environment:
+      DATABASE_URL: postgres://llmhq:llmhq_pass@postgres:5432/llmhq
+      POLYMARKET_MARKET_ID: ${POLYMARKET_MARKET_ID}
+      RUST_LOG: info,llmhq=debug
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "9090:9090"  # Metrics endpoint
+    volumes:
+      - ./rust/.env:/app/.env:ro
+    networks:
+      - llmhq-network
+    restart: unless-stopped
+
+  # Prometheus Metrics
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: llmhq-prometheus
+    volumes:
+      - ./monitoring/prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    ports:
+      - "9091:9090"
+    networks:
+      - llmhq-network
+
+  # Grafana Dashboard
+  grafana:
+    image: grafana/grafana:latest
+    container_name: llmhq-grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - llmhq-network
+
+  # PostgreSQL Exporter (for metrics)
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: llmhq-postgres-exporter
+    environment:
+      DATA_SOURCE_NAME: postgres://llmhq:llmhq_pass@postgres:5432/llmhq?sslmode=disable
+    ports:
+      - "9187:9187"
+    depends_on:
+      - postgres
+    networks:
+      - llmhq-network
+
+volumes:
+  postgres_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  llmhq-network:
+    driver: bridge

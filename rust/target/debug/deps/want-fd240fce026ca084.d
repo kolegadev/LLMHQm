@@ -1,0 +1,5 @@
+/root/.openclaw/workspace/LLMHQm-work/rust/target/debug/deps/want-fd240fce026ca084.d: /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/want-0.3.1/src/lib.rs
+
+/root/.openclaw/workspace/LLMHQm-work/rust/target/debug/deps/libwant-fd240fce026ca084.rmeta: /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/want-0.3.1/src/lib.rs
+
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/want-0.3.1/src/lib.rs:

@@ -1,0 +1,228 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "LLMHQ Trading Dashboard",
+    "tags": ["llmhq", "trading", "crypto"],
+    "timezone": "utc",
+    "schemaVersion": 36,
+    "refresh": "5s",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Current BTC Price",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "llmhq_btc_price",
+            "legendFormat": "BTC/USDT"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "currencyUSD",
+            "decimals": 2
+          }
+        },
+        "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "HMA Slope",
+        "type": "gauge",
+        "targets": [
+          {
+            "expr": "llmhq_hma_slope",
+            "legendFormat": "Degrees"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "min": -90,
+            "max": 90,
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": -90},
+                {"color": "yellow", "value": -15},
+                {"color": "green", "value": 15}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 4, "w": 6, "x": 6, "y": 0}
+      },
+      {
+        "id": 3,
+        "title": "OBI (Order Book Imbalance)",
+        "type": "gauge",
+        "targets": [
+          {
+            "expr": "llmhq_obi_normalized",
+            "legendFormat": "Buy %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "min": 0,
+            "max": 1,
+            "unit": "percentunit",
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "yellow", "value": 0.3},
+                {"color": "green", "value": 0.7}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 4, "w": 6, "x": 12, "y": 0}
+      },
+      {
+        "id": 4,
+        "title": "VPIN (Toxicity)",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "llmhq_vpin",
+            "legendFormat": "VPIN"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "min": 0,
+            "max": 1,
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": 0},
+                {"color": "yellow", "value": 0.6},
+                {"color": "red", "value": 0.75}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 4, "w": 6, "x": 18, "y": 0}
+      },
+      {
+        "id": 5,
+        "title": "Recent Trades",
+        "type": "table",
+        "targets": [
+          {
+            "format": "table",
+            "rawSql": "SELECT block_number, direction, confidence, entry_price, exit_price, outcome, pnl_pct FROM paper_trades ORDER BY entry_time DESC LIMIT 20"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4}
+      },
+      {
+        "id": 6,
+        "title": "P&L Over Time",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "llmhq_pnl_cumulative",
+            "legendFormat": "Cumulative P&L"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "currencyUSD"
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4}
+      },
+      {
+        "id": 7,
+        "title": "Win Rate",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "llmhq_win_rate",
+            "legendFormat": "Win %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "max": 100
+          }
+        },
+        "gridPos": {"h": 4, "w": 4, "x": 0, "y": 12}
+      },
+      {
+        "id": 8,
+        "title": "Total Trades",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "llmhq_total_trades",
+            "legendFormat": "Count"
+          }
+        ],
+        "gridPos": {"h": 4, "w": 4, "x": 4, "y": 12}
+      },
+      {
+        "id": 9,
+        "title": "Current Balance",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "llmhq_balance",
+            "legendFormat": "USD"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "currencyUSD"
+          }
+        },
+        "gridPos": {"h": 4, "w": 4, "x": 8, "y": 12}
+      },
+      {
+        "id": 10,
+        "title": "Active Trade",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "llmhq_active_trade_direction",
+            "legendFormat": "Direction"
+          }
+        ],
+        "gridPos": {"h": 4, "w": 4, "x": 12, "y": 12}
+      },
+      {
+        "id": 11,
+        "title": "Basis (Spot - Perp)",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "llmhq_basis_bps",
+            "legendFormat": "Basis (bps)"
+          }
+        ],
+        "gridPos": {"h": 6, "w": 12, "x": 0, "y": 16}
+      },
+      {
+        "id": 12,
+        "title": "Liquidations (1m)",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "llmhq_long_liquidations_1m",
+            "legendFormat": "Longs Liquidated"
+          },
+          {
+            "expr": "llmhq_short_liquidations_1m",
+            "legendFormat": "Shorts Liquidated"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "currencyUSD"
+          }
+        },
+        "gridPos": {"h": 6, "w": 12, "x": 12, "y": 16}
+      }
+    ]
+  }
+}
