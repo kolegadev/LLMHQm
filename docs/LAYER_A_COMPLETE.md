@@ -161,3 +161,19 @@ B) API - Full automation (requires Polymarket API setup)
 | `src/features.py` | Indicator calculations |
 | `src/cio_client.py` | CIO workflow client |
 | `src/paper_executor.py` | Paper trading execution |
+| `src/timing_and_risk.py` | BlockTimer + PinningRiskCalculator |
+| `docs/DATA_AUDIT.md` | Full thesis vs implementation audit |
+
+---
+
+## Thesis Alignment Status
+
+See `docs/DATA_AUDIT.md` for complete analysis.
+
+**Summary: 8/10 components implemented**
+
+✅ **Complete:** VPIN (simplified), Spot-Perp basis, Liquidity voids, OBI velocity, HMA, Momentum, Volatility regime, Liquidations
+
+⚠️ **Partial:** Multi-exchange (Binance only), Sentiment (Fear/Greed only)
+
+❌ **Added Now:** Block timing sync, Pinning risk detection
