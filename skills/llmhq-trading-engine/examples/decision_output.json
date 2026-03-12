@@ -1,0 +1,10 @@
+{
+  "direction": "UP",
+  "confidence": 78,
+  "regime": "trending",
+  "lead_driver": "OBI",
+  "rationale": "Strong buy-side absorption with thinning sell book supports continuation. HMA slope confirms momentum. Perp leading spot indicates informed flow. No exhaustion signals detected.",
+  "risk_flags": ["moderate_vpin", "perp_premium_elevated"],
+  "veto_applied": false,
+  "veto_reason": ""
+}

@@ -1,0 +1,30 @@
+{
+  "timestamp": "2026-03-13T04:30:00Z",
+  "interval": "5m",
+  "raw_snapshot": {
+    "price": 83452.15,
+    "best_bid": 83450.50,
+    "best_ask": 83453.80,
+    "bid_depth_1pct": 142.5,
+    "ask_depth_1pct": 89.3,
+    "perp_premium_bps": 4.2,
+    "spot_perp_spread": 2.1,
+    "recent_liquidations": {
+      "longs": 450000,
+      "shorts": 120000
+    }
+  },
+  "derived_indicators": {
+    "obi": 0.72,
+    "obi_velocity": 0.15,
+    "hma_14": 83448.30,
+    "hma_slope": 8.5,
+    "vpin": 0.58,
+    "volatility_state": "moderate",
+    "liquidity_void_above": 83800,
+    "liquidity_void_below": 83100,
+    "acceleration": "increasing",
+    "cross_exchange_lead": "perp"
+  },
+  "semantic_narrative": "Price is surfing the 14-period HMA with steepening slope. Buy-side absorption is dominant (OBI 0.72) and the sell book is unusually thin. Perp is leading spot by 4.2bps. No significant liquidity voids nearby. Market structure suggests continuation with moderate toxicity."
+}

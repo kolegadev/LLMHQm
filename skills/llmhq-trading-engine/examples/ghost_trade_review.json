@@ -1,0 +1,7 @@
+{
+  "classification": "failure",
+  "likely_cause": "Late OBI spike was pinning, not genuine demand. Large sell wall appeared at 83480 immediately after entry.",
+  "lesson_learned": "Final-5s OBI spikes above 0.7 in trending conditions should reduce confidence by 20 points due to spoofing risk.",
+  "regime_adjustment": "In trending regimes, apply OBI_vpin_combined threshold: require VPIN < 0.6 when OBI > 0.70.",
+  "warning_rule": "IF obi_velocity > 0.20 AND obi > 0.70 AND regime == trending THEN confidence -= 20 AND flag 'possible_pin'"
+}
