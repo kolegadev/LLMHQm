@@ -11,6 +11,7 @@ pub mod timing;
 pub mod executor;
 pub mod polymarket;
 pub mod collectors;
+pub mod analysts;
 pub mod integration;
 
 // Re-export main types
@@ -21,6 +22,7 @@ pub use timing::BlockTimer;
 pub use executor::{PaperExecutor, PaperTradingConfig, PriceTracker};
 pub use polymarket::PolymarketClient;
 pub use collectors::BinanceCollector;
+pub use analysts::AnalystEngine;
 pub use integration::{TradingLoop, run_llmhq};
 
 use tracing::{info, warn, error};
