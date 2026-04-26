@@ -1,0 +1,40 @@
+# Machine-readable repository metadata
+# This file helps AI assistants and automation tools understand your project
+schema_version: "1.0"
+
+project:
+  name: "LLMHQm"
+  type: "None"
+  status: "active"
+  maturity: "experimental"
+
+domains:
+
+technologies:
+
+languages:
+  - Makefile
+  - Rust
+  - Python
+  - PLpgSQL
+  - DTrace
+  - Dockerfile
+
+hardware:
+  gpu_vendors: []
+  compute_apis: []
+
+dependencies:
+  required: []
+  optional: []
+
+relationships:
+  depends_on: []
+  used_by: []
+  related: []
+
+ai_context:
+  summary: "LLMHQm project - a Makefile project"
+  use_cases: []
+  not_suitable_for: []
+  entry_points: []
